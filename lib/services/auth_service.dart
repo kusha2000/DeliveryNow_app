@@ -75,6 +75,14 @@ class AuthService {
     await _auth.signOut();
   }
 
+  // Send password reset email
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   // Update user verification status in Firestore
   Future<void> updateVerificationStatus(String uid, bool isVerified) async {
