@@ -1,7 +1,8 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_now_app/models/delivery_model.dart';
 import 'package:delivery_now_app/services/auth_service.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
+import 'package:delivery_now_app/services/notification_services.dart';
 import 'package:delivery_now_app/shared/widgets/customer_delivery_item_with_chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/models/user_model.dart';
@@ -181,7 +182,53 @@ class _CustomerMenuState extends State<CustomerMenu>
                     ),
                   ),
 
-                  
+                  // Notification Card
+                  StreamBuilder<Map<String, dynamic>?>(
+                    stream:
+                        NotificationServices().getLatestPendingNotification(),
+                    builder: (context, notificationSnapshot) {
+                      print(
+                          "DEBUG: StreamBuilder state: ${notificationSnapshot.connectionState}");
+                      print(
+                          "DEBUG: StreamBuilder hasData: ${notificationSnapshot.hasData}");
+                      print(
+                          "DEBUG: StreamBuilder data: ${notificationSnapshot.data}");
+
+                      if (notificationSnapshot.hasError) {
+                        print(
+                            "DEBUG: StreamBuilder error: ${notificationSnapshot.error}");
+                        return const Center(
+                            child: Text('Error loading notification'));
+                      }
+
+                      if (notificationSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        print("DEBUG: StreamBuilder waiting for data");
+                        return const SizedBox.shrink();
+                      }
+
+                      if (notificationSnapshot.hasData &&
+                          notificationSnapshot.data != null) {
+                        print(
+                            "DEBUG: Building notification card with data: ${notificationSnapshot.data}");
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (!_animationController.isAnimating) {
+                            print(
+                                "DEBUG: Starting animation for notification card");
+                            _animationController.forward();
+                          }
+                        });
+                        return _buildNotificationCard(
+                            notificationSnapshot.data!,
+                            '$capitalizedFirstName $capitalizedLastName');
+                      }
+
+                      print(
+                          "DEBUG: No notification data, returning empty widget");
+                      return const SizedBox.shrink();
+                    },
+                  ),
+
                   // Bottom User Profile Section
                   _buildBottomUserSection(),
                 ],
@@ -193,6 +240,212 @@ class _CustomerMenuState extends State<CustomerMenu>
     );
   }
 
+  Future<void> _closeNotification(String notificationId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'isclosedNotification': true});
+
+      _animationController.reverse();
+      print('Notification closed successfully');
+    } catch (e) {
+      print('Error closing notification: $e');
+    }
+  }
+
+  Widget _buildNotificationCard(
+      Map<String, dynamic> data, String customerName) {
+    final notification = data['notification'];
+    final notificationId = data['notificationId'];
+
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _slideAnimation.value as double),
+          child: Opacity(
+            opacity: _fadeAnimation.value,
+            child: Container(
+              margin: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryColor.withOpacity(0.9),
+                    AppColors.primaryColor.withOpacity(0.7),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryColor.withOpacity(0.3),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -20,
+                    top: -20,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: -30,
+                    bottom: -30,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.notifications_active,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Delivery Update',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Package #${notification['parcel_tracking_number']}',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                notification['notification_text'] ??
+                                    'Delivery update available',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.white.withOpacity(0.8),
+                                    size: 14,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    notification['customer_name'] ?? 'Customer',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Icon(
+                                    Icons.access_time,
+                                    color: Colors.white.withOpacity(0.8),
+                                    size: 14,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    notification['delivery_date'] ?? 'Today',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: IconButton(
+                                onPressed: () async {
+                                  await _closeNotification(notificationId);
+                                },
+                                icon: Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                tooltip: 'Dismiss',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildWelcomeText() {
     return Positioned(
