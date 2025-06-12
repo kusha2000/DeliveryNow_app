@@ -708,7 +708,7 @@ class _DeliveriesModuleScreenState extends State<DeliveriesModuleScreen>
                             subtitle: "Create and assign delivery orders",
                             icon: Icons.add_circle_rounded,
                             gradient:
-                                AppDecorations.containerTealGradientDecoration()
+                                AppDecorations.containerProfessionalDarkDecoration()
                                     .gradient as LinearGradient,
                             isEnabled: _selectedDriver?.availabilityStatus !=
                                     'absent' &&
@@ -741,7 +741,7 @@ class _DeliveriesModuleScreenState extends State<DeliveriesModuleScreen>
                             subtitle: "Modify existing delivery orders",
                             icon: Icons.edit_rounded,
                             gradient:
-                                AppDecorations.containerGoldGradientDecoration()
+                                AppDecorations.containerProfessionalMediumDecoration()
                                     .gradient as LinearGradient,
                             isEnabled: _selectedDriver != null,
                             onTap: () {

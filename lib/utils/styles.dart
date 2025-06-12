@@ -150,6 +150,56 @@ class AppDecorations {
     );
   }
 
+static BoxDecoration containerProfessionalDarkDecoration({
+  double borderRadius = 16,
+  List<BoxShadow>? boxShadow,
+}) {
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color(0xFF2D3748), // Professional dark blue-grey
+        Color(0xFF1A202C), // Darker blue-grey
+      ],
+    ),
+    borderRadius: BorderRadius.circular(borderRadius),
+    boxShadow: boxShadow ??
+        [
+          BoxShadow(
+            color: Color(0xFF1A202C).withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+  );
+}
+
+static BoxDecoration containerProfessionalMediumDecoration({
+  double borderRadius = 16,
+  List<BoxShadow>? boxShadow,
+}) {
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color(0xFF4A5568), // Professional medium grey
+        Color(0xFF2D3748), // Professional dark grey
+      ],
+    ),
+    borderRadius: BorderRadius.circular(borderRadius),
+    boxShadow: boxShadow ??
+        [
+          BoxShadow(
+            color: Color(0xFF2D3748).withOpacity(0.3),   
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+  );
+}
+
   // Special decoration for user type cards
   static BoxDecoration userTypeDecoration({
     required String userType,
