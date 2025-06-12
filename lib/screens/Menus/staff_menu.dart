@@ -1,3 +1,4 @@
+import 'package:delivery_now_app/screens/staff/delivery_modules/delivery_modules.dart';
 import 'package:delivery_now_app/services/auth_service.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +125,11 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
                                         AppColors.blueGreyColor,
                                         AppColors.blueGreyColor.withOpacity(0.7)
                                       ],
-                                      onTap: () {},
+                                      onTap: () {                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DeliveriesModuleScreen()));},
                                     ),
                                     _buildEnhancedMenuCard(
                                       icon: Icons.local_shipping_outlined,
