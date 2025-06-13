@@ -28,6 +28,114 @@ class FirebaseServices {
     return _auth.currentUser?.uid;
   }
 
+  //Delivery Functions
+    Future<String> assignNewDelivery({
+    required String packageId,
+    required String customerName,
+    required String address,
+    required String riderId,
+    required String riderName,
+    required Timestamp assignedDate,
+    required String packageDetails,
+    required List<String> items,
+    required String priority,
+    required String typeOfOrder,
+    required String phoneNumber,
+    required double price,
+    required String customerId,
+  }) async {
+    try {
+      final docRef = _firestore.collection('deliveries').doc();
+
+      // Prepare the delivery data
+      final deliveryData = {
+        'id': docRef.id,
+        'packageId': packageId,
+        'customerName': customerName,
+        'address': address,
+        'riderId': riderId,
+        'riderName': riderName,
+        'assignedDate': assignedDate,
+        'status': 'pending',
+        'packageDetails': packageDetails,
+        'items': items,
+        'createdAt': Timestamp.now(),
+        'priority': priority,
+        'typeOfOrder': typeOfOrder,
+        'phoneNumber': phoneNumber,
+        'images': <String>[],
+        'price': price,
+        'customerId': customerId,
+      };
+
+      // Save to Firestore
+      await docRef.set(deliveryData);
+
+      return docRef.id;
+    } catch (e) {
+      print('Error assigning delivery: $e');
+      rethrow;
+    }
+  }
+
+
+  //Riders
+
+    Future<List<UserModel>> getAllRiders() async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where('userType', isEqualTo: 'rider')
+          .get();
+
+      return snapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error loading riders: $e');
+      return [];
+    }
+  }
+
+
+  //Notifications
+
+
+  Future<void> saveDeliveryNotification({
+    required String customerName,
+    required String parcelTrackingNumber,
+    required String deliveryDate,
+    required Map<String, String> timeWindow,
+    required Map<String, String> deliveryAddress,
+    required String courierInfo,
+    required String parcelContents,
+    required String riderId,
+    required String notificationText,
+    required String confirmationResult,
+    String? customerId, // Add customerId
+  }) async {
+    final notificationData = {
+      'customer_name': customerName,
+      'parcel_tracking_number': parcelTrackingNumber,
+      'delivery_date': deliveryDate,
+      'time_window': timeWindow,
+      'delivery_address': deliveryAddress,
+      'courier_info': courierInfo,
+      'parcel_contents': parcelContents,
+      'riderId': riderId,
+      'notification_text': notificationText,
+      'confirmation_result': confirmationResult,
+      'isclosedNotification': false,
+      'isclosed': false,
+      'created_at': FieldValue.serverTimestamp(),
+      'customerId': customerId, // Save customerId
+    };
+
+    await FirebaseFirestore.instance
+        .collection('notifications')
+        .add(notificationData);
+  }
+
   //Streams
 
   Stream<List<DeliveryModel>> getCustomerDeliveries(String customerId) {
@@ -39,4 +147,15 @@ class FirebaseServices {
             .map((doc) => DeliveryModel.fromMap(doc.data()))
             .toList());
   }
+
+    Stream<List<DeliveryModel>> getRiderDeliveries(String riderId) {
+    return _firestore
+        .collection('deliveries')
+        .where('riderId', isEqualTo: riderId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => DeliveryModel.fromMap(doc.data()))
+            .toList());
+  }
+
 }
