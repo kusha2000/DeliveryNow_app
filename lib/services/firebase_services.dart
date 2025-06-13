@@ -78,6 +78,48 @@ class FirebaseServices {
     }
   }
 
+    Future<void> updateDeliveryDetails({
+    required String deliveryId,
+    required String customerName,
+    required String address,
+    required String phoneNumber,
+    required String packageDetails,
+    required List<String> items,
+    required Timestamp assignedDate,
+    required String priority,
+    required String typeOfOrder,
+    required double price,
+  }) async {
+    try {
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'customerName': customerName,
+        'address': address,
+        'phoneNumber': phoneNumber,
+        'packageDetails': packageDetails,
+        'items': items,
+        'assignedDate': assignedDate,
+        'priority': priority,
+        'typeOfOrder': typeOfOrder,
+        'price': price,
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      print('Error updating delivery details: $e');
+      rethrow;
+    }
+  }
+
+    // Cancel delivery
+  Future<void> cancelDelivery(String deliveryId) async {
+    try {
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'status': 'cancelled',
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   //Riders
 
