@@ -52,6 +52,7 @@ final class AppColors {
   static const Color grey700 = Color(0xFF6D5B87);
   static const Color grey800 = Color(0xFF4A3F6B);
   static const Color grey900 = Color(0xFF2A1B47);
+  static const Color darkGreyColor = Color(0xFF757575);
 
   // NEW: Additional Beautiful Colors for Cards
   static const Color tealColor = Color(0xFF26A69A); // Beautiful Teal
