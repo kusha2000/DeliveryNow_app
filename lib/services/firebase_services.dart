@@ -29,7 +29,7 @@ class FirebaseServices {
   }
 
   //Delivery Functions
-    Future<String> assignNewDelivery({
+  Future<String> assignNewDelivery({
     required String packageId,
     required String customerName,
     required String address,
@@ -78,7 +78,7 @@ class FirebaseServices {
     }
   }
 
-    Future<void> updateDeliveryDetails({
+  Future<void> updateDeliveryDetails({
     required String deliveryId,
     required String customerName,
     required String address,
@@ -109,7 +109,7 @@ class FirebaseServices {
     }
   }
 
-    // Cancel delivery
+  // Cancel delivery
   Future<void> cancelDelivery(String deliveryId) async {
     try {
       await _firestore.collection('deliveries').doc(deliveryId).update({
@@ -121,9 +121,49 @@ class FirebaseServices {
     }
   }
 
+  // Get all deliveries
+  Future<List<DeliveryModel>> fetchAllDeliveries() async {
+    try {
+      final snapshot = await _firestore.collection('deliveries').get();
+
+      return snapshot.docs
+          .map((doc) => DeliveryModel.fromMap(doc.data()))
+          .toList();
+    } catch (e) {
+      print('Error getting deliveries by date: $e');
+      rethrow;
+    }
+  }
+
+  // Get deliveries by date for a rider
+  Future<List<DeliveryModel>> fetchAllDeliveriesByDate({
+    required DateTime date,
+  }) async {
+    try {
+      // Get start and end of the selected date
+      final startDate = DateTime(date.year, date.month, date.day);
+      final endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+      final snapshot = await _firestore
+          .collection('deliveries')
+          .where('assignedDate',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .where('assignedDate',
+              isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+          .get();
+
+      return snapshot.docs
+          .map((doc) => DeliveryModel.fromMap(doc.data()))
+          .toList();
+    } catch (e) {
+      print('Error getting deliveries by date: $e');
+      rethrow;
+    }
+  }
+
   //Riders
 
-    Future<List<UserModel>> getAllRiders() async {
+  Future<List<UserModel>> getAllRiders() async {
     try {
       QuerySnapshot snapshot = await _firestore
           .collection('users')
@@ -139,9 +179,7 @@ class FirebaseServices {
     }
   }
 
-
   //Notifications
-
 
   Future<void> saveDeliveryNotification({
     required String customerName,
@@ -190,7 +228,7 @@ class FirebaseServices {
             .toList());
   }
 
-    Stream<List<DeliveryModel>> getRiderDeliveries(String riderId) {
+  Stream<List<DeliveryModel>> getRiderDeliveries(String riderId) {
     return _firestore
         .collection('deliveries')
         .where('riderId', isEqualTo: riderId)
@@ -199,5 +237,4 @@ class FirebaseServices {
             .map((doc) => DeliveryModel.fromMap(doc.data()))
             .toList());
   }
-
 }

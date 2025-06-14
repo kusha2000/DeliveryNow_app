@@ -1,3 +1,4 @@
+import 'package:delivery_now_app/screens/staff/dashboard/dashboard_screen.dart';
 import 'package:delivery_now_app/screens/staff/delivery_modules/delivery_modules.dart';
 import 'package:delivery_now_app/services/auth_service.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -115,7 +116,13 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
                                         AppColors.primaryColor,
                                         AppColors.primaryColor.withOpacity(0.7)
                                       ],
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DashboardScreen()));
+                                      },
                                     ),
                                     _buildEnhancedMenuCard(
                                       icon: Icons.route_sharp,
@@ -125,11 +132,13 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
                                         AppColors.blueGreyColor,
                                         AppColors.blueGreyColor.withOpacity(0.7)
                                       ],
-                                      onTap: () {                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          DeliveriesModuleScreen()));},
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DeliveriesModuleScreen()));
+                                      },
                                     ),
                                     _buildEnhancedMenuCard(
                                       icon: Icons.local_shipping_outlined,
