@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/utils/colors.dart';
@@ -25,485 +24,194 @@ Widget customerDeliveryItemWithChatWidget({
       Map<String, dynamic>? riderData = snapshot.data;
 
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.whiteColor,
-                  AppColors.primaryColor.withOpacity(0.01),
-                  AppColors.whiteColor,
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: AppColors.primaryColor.withOpacity(0.08),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryColor.withOpacity(0.12),
-                  blurRadius: 32,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 8),
-                ),
-                BoxShadow(
-                  color: AppColors.blackColor.withOpacity(0.04),
-                  blurRadius: 16,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          gradient: AppColors.cardGradient,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppColors.borderColor,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowColor,
+              blurRadius: 15,
+              offset: const Offset(0, 4),
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withOpacity(0.9),
-                    Colors.white.withOpacity(0.7),
-                  ],
-                ),
+            BoxShadow(
+              color: AppColors.lightShadowColor,
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Row with ID and Status
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppColors.primaryColor.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      'Order #$id',
+                      style: const TextStyle(
+                        color: AppColors.primaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: statusColor.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      status.toUpperCase(),
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      // Header Section
-                      Row(
-                        children: [
-                          // Package Icon with Glassmorphism Effect
-                          Container(
-                            width: 64,
-                            height: 64,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  AppColors.primaryColor.withOpacity(0.2),
-                                  AppColors.primaryColor.withOpacity(0.1),
-                                ],
-                              ),
-                              border: Border.all(
-                                color: AppColors.primaryColor.withOpacity(0.3),
-                                width: 1.5,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primaryColor.withOpacity(0.2),
-                                  blurRadius: 12,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.local_shipping_rounded,
-                              color: AppColors.primaryColor,
-                              size: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          
-                          // Package Info
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Package ID Chip
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColors.primaryColor.withOpacity(0.15),
-                                        AppColors.primaryColor.withOpacity(0.08),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: AppColors.primaryColor.withOpacity(0.2),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    '#$id',
-                                    style: TextStyle(
-                                      color: AppColors.primaryColor,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                
-                                // Customer Name
-                                if (name.isNotEmpty)
-                                  Text(
-                                    name,
-                                    style: TextStyle(
-                                      color: AppColors.blackColor,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          
-                          // Status Badge with Modern Design
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  statusColor.withOpacity(0.15),
-                                  statusColor.withOpacity(0.08),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: statusColor.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              status.toUpperCase(),
-                              style: TextStyle(
-                                color: statusColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 11,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ),
+
+              const SizedBox(height: 16),
+
+              // Main Content Row
+              Row(
+                children: [
+                  // Beautiful Shipping Icon Container
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primaryColor.withOpacity(0.2),
+                          AppColors.primaryLightColor.withOpacity(0.1),
                         ],
                       ),
-                      
-                      const SizedBox(height: 20),
-                      
-                      // Address and Date Section
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: AppColors.primaryColor.withOpacity(0.08),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            // Address Row
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColors.primaryColor.withOpacity(0.1),
-                                        AppColors.primaryColor.withOpacity(0.05),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    Icons.location_on_rounded,
-                                    size: 16,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    address,
-                                    style: TextStyle(
-                                      color: AppColors.grey700,
-                                      fontSize: 14,
-                                      height: 1.4,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.primaryColor.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.local_shipping_rounded,
+                      color: AppColors.primaryColor,
+                      size: 28,
+                    ),
+                  ),
+
+                  const SizedBox(width: 16),
+
+                  // Content Column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Customer Name
+                        if (name.isNotEmpty)
+                          Text(
+                            name,
+                            style: const TextStyle(
+                              color: AppColors.textPrimaryColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
                             ),
-                            
-                            const SizedBox(height: 12),
-                            
-                            // Date Row
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColors.tealColor.withOpacity(0.1),
-                                        AppColors.tealColor.withOpacity(0.05),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    Icons.schedule_rounded,
-                                    size: 16,
-                                    color: AppColors.tealColor,
-                                  ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+
+                        const SizedBox(height: 8),
+
+                        // Address with Icon
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.location_on_rounded,
+                              color: AppColors.textSecondaryColor,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                address,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondaryColor,
+                                  fontSize: 14,
+                                  height: 1.4,
                                 ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  DateFormat('MMM d, yyyy • h:mm a').format(date.toDate()),
-                                  style: TextStyle(
-                                    color: AppColors.grey700,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                      
-                      // Rider Section
-                      if (riderData != null) ...[
-                        const SizedBox(height: 20),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                AppColors.riderColor.withOpacity(0.08),
-                                AppColors.riderColor.withOpacity(0.04),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.riderColor.withOpacity(0.15),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              // Rider Avatar with Gradient Border
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      AppColors.riderColor,
-                                      AppColors.riderColor.withOpacity(0.7),
-                                    ],
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.riderColor.withOpacity(0.3),
-                                      blurRadius: 12,
-                                      spreadRadius: 0,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: riderData['profileImage'] != null &&
-                                            riderData['profileImage'].isNotEmpty
-                                        ? _buildProfileImage(riderData['profileImage'])
-                                        : _buildInitialsAvatar(riderData['riderName'] ?? 'Unknown'),
-                                  ),
-                                ),
-                              ),
-                              
-                              const SizedBox(width: 16),
-                              
-                              // Rider Info
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.riderColor.withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.delivery_dining_rounded,
-                                                size: 14,
-                                                color: AppColors.riderColor,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                "Delivery Rider",
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: AppColors.riderColor,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      riderData['riderName'] ?? 'Unknown Rider',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.blackColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              
-                              // Chat Button with Glassmorphism
-                              GestureDetector(
-                                onTap: () {
-                                  if (customerId == null || customerId.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Unregistered users cant use the chat feature.'),
-                                        backgroundColor: AppColors.errorColor,
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                    );
-                                    return;
-                                  }
 
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => ChatScreen(
-                                  //       customerId: customerId,
-                                  //       customerName: customerName ?? name,
-                                  //       orderId: orderId ?? id,
-                                  //       isCustomer: isCustomer,
-                                  //     ),
-                                  //   ),
-                                  // );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        AppColors.primaryColor.withOpacity(0.15),
-                                        AppColors.primaryColor.withOpacity(0.08),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: AppColors.primaryColor.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primaryColor.withOpacity(0.2),
-                                        blurRadius: 8,
-                                        spreadRadius: 0,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    Icons.chat_bubble_rounded,
-                                    color: AppColors.primaryColor,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ] else if (snapshot.connectionState == ConnectionState.waiting) ...[
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
+
+                        // Date with Beautiful Styling
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
-                            color: AppColors.whiteColor.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(16),
+                            color: AppColors.surfaceColor,
+                            borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: AppColors.primaryColor.withOpacity(0.08),
+                              color: AppColors.borderLightColor,
+                              width: 1,
                             ),
                           ),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Loading Avatar
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      AppColors.grey300.withOpacity(0.3),
-                                      AppColors.grey200.withOpacity(0.3),
-                                    ],
-                                  ),
-                                ),
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColors.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              const Icon(
+                                Icons.access_time_rounded,
+                                color: AppColors.textMutedColor,
+                                size: 14,
                               ),
-                              const SizedBox(width: 16),
+                              const SizedBox(width: 6),
                               Text(
-                                "Loading rider details...",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.grey600,
+                                DateFormat('MMM d, yyyy • h:mm a')
+                                    .format(date.toDate()),
+                                style: const TextStyle(
+                                  color: AppColors.textMutedColor,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -511,15 +219,305 @@ Widget customerDeliveryItemWithChatWidget({
                           ),
                         ),
                       ],
-                    ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // Rider Section
+              if (riderData != null) ...[
+                const SizedBox(height: 20),
+                
+                // Beautiful Divider
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.dividerColor.withOpacity(0.3),
+                        AppColors.dividerColor,
+                        AppColors.dividerColor.withOpacity(0.3),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+                
+                const SizedBox(height: 20),
+                
+                _buildModernRiderSection(riderData, context, customerId,
+                    customerName, name, orderId, id, isCustomer),
+              ] else if (snapshot.connectionState == ConnectionState.waiting) ...[
+                const SizedBox(height: 20),
+                
+                // Beautiful Divider
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.dividerColor.withOpacity(0.3),
+                        AppColors.dividerColor,
+                        AppColors.dividerColor.withOpacity(0.3),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 20),
+                
+                _buildModernLoadingRiderSection(),
+              ],
+            ],
           ),
         ),
       );
     },
+  );
+}
+
+// Modern Rider Section Widget
+Widget _buildModernRiderSection(
+  Map<String, dynamic> riderData,
+  BuildContext context,
+  String? customerId,
+  String? customerName,
+  String name,
+  String? orderId,
+  String id,
+  bool isCustomer,
+) {
+  return Row(
+    children: [
+      // Modern Rider Avatar
+      Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.borderColor,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowColor.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: riderData['profileImage'] != null &&
+                  riderData['profileImage'].isNotEmpty
+              ? _buildProfileImage(riderData['profileImage'])
+              : _buildModernInitialsAvatar(riderData['riderName'] ?? 'Unknown'),
+        ),
+      ),
+
+      const SizedBox(width: 16),
+
+      // Rider Info
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Rider Label
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.riderColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.riderColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: const Text(
+                'DELIVERY RIDER',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.riderColor,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 6),
+            
+            // Rider Name
+            Text(
+              riderData['riderName'] ?? 'Unknown Rider',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimaryColor,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      // Modern Chat Button
+      _buildModernChatButton(
+          context, customerId, customerName, name, orderId, id, isCustomer),
+    ],
+  );
+}
+
+// Modern Chat Button Widget
+Widget _buildModernChatButton(
+  BuildContext context,
+  String? customerId,
+  String? customerName,
+  String name,
+  String? orderId,
+  String id,
+  bool isCustomer,
+) {
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: () {
+        if (customerId == null || customerId.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Unregistered users cannot use the chat feature.',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimaryColor,
+                ),
+              ),
+              backgroundColor: AppColors.errorColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.all(16),
+            ),
+          );
+          return;
+        }
+
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => ChatScreen(
+        //       customerId: customerId,
+        //       customerName: customerName ?? name,
+        //       orderId: orderId ?? id,
+        //       isCustomer: isCustomer,
+        //     ),
+        //   ),
+        // );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDarkColor,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.primaryColor.withOpacity(0.3),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryColor.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: AppColors.primaryColor.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.chat_bubble_outline_rounded,
+          color: AppColors.backgroundColor,
+          size: 22,
+        ),
+      ),
+    ),
+  );
+}
+
+// Modern Loading Rider Section Widget
+Widget _buildModernLoadingRiderSection() {
+  return Row(
+    children: [
+      // Modern Loading Avatar
+      Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.surfaceColor,
+              AppColors.cardColor,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.borderColor,
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.primaryColor.withOpacity(0.7),
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      const SizedBox(width: 16),
+
+      // Loading Text with Shimmer Effect
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 16,
+              width: 120,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 14,
+              width: 80,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceColor.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
   );
 }
 
@@ -575,60 +573,45 @@ Future<Map<String, dynamic>?> _getRiderDetails(String packageId) async {
 Widget _buildProfileImage(String base64String) {
   try {
     Uint8List bytes = base64Decode(base64String);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.blackColor.withOpacity(0.1),
-            blurRadius: 8,
-            spreadRadius: 0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Image.memory(
-          bytes,
-          fit: BoxFit.cover,
-          width: 52,
-          height: 52,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildInitialsAvatar('U');
-          },
-        ),
-      ),
+    return Image.memory(
+      bytes,
+      fit: BoxFit.cover,
+      width: 52,
+      height: 52,
+      errorBuilder: (context, error, stackTrace) {
+        return _buildModernInitialsAvatar('U');
+      },
     );
   } catch (e) {
-    return _buildInitialsAvatar('U');
+    return _buildModernInitialsAvatar('U');
   }
 }
 
-// Helper function to build initials avatar
-Widget _buildInitialsAvatar(String name) {
+// Modern Initials Avatar Widget
+Widget _buildModernInitialsAvatar(String name) {
   String initials = _getInitials(name);
   return Container(
     width: 52,
     height: 52,
     decoration: BoxDecoration(
-      gradient: LinearGradient(
+      gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
           AppColors.riderColor,
-          AppColors.riderColor.withOpacity(0.8),
+          AppColors.indigoColor,
         ],
       ),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
     ),
     child: Center(
       child: Text(
         initials,
-        style: TextStyle(
-          color: AppColors.whiteColor,
-          fontSize: 20,
+        style: const TextStyle(
+          color: AppColors.textPrimaryColor,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
       ),
     ),

@@ -285,13 +285,7 @@ class _AssignNewDeliveryState extends State<AssignNewDelivery>
             child: Container(
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                gradient: gradientStart != null && gradientEnd != null
-                    ? LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [gradientStart, gradientEnd],
-                      )
-                    : null,
+                gradient: AppColors.cardGradient,
                 color: gradientStart == null ? AppColors.cardColor : null,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -442,7 +436,7 @@ class _AssignNewDeliveryState extends State<AssignNewDelivery>
                         color: AppColors.whiteColor,
                       ),
                     ),
-                    dropdownColor: AppColors.violetColor,
+                    dropdownColor: AppColors.borderLightColor,
                     style: const TextStyle(color: AppColors.whiteColor),
                     items: _customers.map((UserModel customer) {
                       return DropdownMenuItem<UserModel>(

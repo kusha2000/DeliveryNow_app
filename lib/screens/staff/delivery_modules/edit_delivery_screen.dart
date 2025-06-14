@@ -771,39 +771,10 @@ class _EditDeliveryScreenState extends State<EditDeliveryScreen>
         statusColor = AppColors.errorColor;
         statusIcon = Icons.cancel_rounded;
     }
-
-    // Get gradient based on priority
-    LinearGradient cardGradient;
-    switch (delivery.priority) {
-      case 'high':
-        cardGradient = LinearGradient(
-          colors: [
-            AppColors.errorColor.withOpacity(0.1),
-            AppColors.pinkColor.withOpacity(0.05),
-          ],
-        );
-        break;
-      case 'medium':
-        cardGradient = LinearGradient(
-          colors: [
-            AppColors.warningColor.withOpacity(0.1),
-            AppColors.primaryColor.withOpacity(0.05),
-          ],
-        );
-        break;
-      default:
-        cardGradient = LinearGradient(
-          colors: [
-            AppColors.successColor.withOpacity(0.1),
-            AppColors.tealColor.withOpacity(0.05),
-          ],
-        );
-    }
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        gradient: cardGradient,
+        gradient: AppColors.cardGradient,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppColors.borderColor.withOpacity(0.5),

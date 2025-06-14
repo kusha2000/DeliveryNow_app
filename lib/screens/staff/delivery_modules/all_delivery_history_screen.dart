@@ -1,8 +1,8 @@
+import 'package:delivery_now_app/shared/widgets/customer_delivery_item_with_chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/models/delivery_model.dart';
 import 'package:delivery_now_app/models/user_model.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
-import 'package:delivery_now_app/shared/widgets/delivery_item_widget.dart';
 import 'package:delivery_now_app/utils/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -78,22 +78,6 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
               .isAfter(startOfDay.subtract(const Duration(seconds: 1))) &&
           deliveryDate.isBefore(endOfDay.add(const Duration(seconds: 1)));
     }).toList();
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'delivered':
-        return AppColors.successColor;
-      case 'pending':
-        return AppColors.warningColor;
-      case 'cancelled':
-        return AppColors.errorColor;
-      case 'in_transit':
-      case 'on_route':
-        return AppColors.infoColor;
-      default:
-        return AppColors.primaryColor;
-    }
   }
 
   @override
@@ -180,7 +164,8 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -233,9 +218,11 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                DateFormat('EEEE, MMM d, yyyy').format(_filterDate!),
+                                DateFormat('EEEE, MMM d, yyyy')
+                                    .format(_filterDate!),
                                 style: TextStyle(
-                                  color: AppColors.primaryColor.withOpacity(0.8),
+                                  color:
+                                      AppColors.primaryColor.withOpacity(0.8),
                                   fontSize: 12,
                                 ),
                               ),
@@ -245,7 +232,7 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
                       ],
                     ),
                   ),
-                
+
                 // Header Section
                 Container(
                   padding: const EdgeInsets.all(20),
@@ -316,9 +303,9 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 Expanded(
                   child: StreamBuilder<List<DeliveryModel>>(
                     stream: _firebaseServices
@@ -366,7 +353,7 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
                           ),
                         );
                       }
-                      
+
                       if (!snapshot.hasData) {
                         return const Center(
                           child: CircularProgressIndicator(
@@ -401,7 +388,8 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
-                                    color: AppColors.textMutedColor.withOpacity(0.1),
+                                    color: AppColors.textMutedColor
+                                        .withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Icon(
@@ -444,13 +432,34 @@ class _AllDeliveryHistoryScreenState extends State<AllDeliveryHistoryScreen> {
                         itemCount: _filteredDeliveries.length,
                         itemBuilder: (context, index) {
                           final delivery = _filteredDeliveries[index];
-                          return deliveryItemWidget(
-                            delivery.packageId,
-                            delivery.customerName,
-                            delivery.address,
-                            delivery.status,
-                            delivery.assignedDate,
-                            _getStatusColor(delivery.status),
+                          Color getStatusColor(String status) {
+                            switch (status.toLowerCase()) {
+                              case 'pending':
+                                return AppColors.orangeColor;
+                              case 'in_progress':
+                              case 'picked_up':
+                                return AppColors.primaryColor;
+                              case 'delivered':
+                                return AppColors.greenColor;
+                              case 'cancelled':
+                                return AppColors.redColor;
+                              default:
+                                return AppColors.greyColor;
+                            }
+                          }
+
+                          return customerDeliveryItemWithChatWidget(
+                            id: delivery.packageId,
+                            name: delivery.customerName,
+                            address: delivery.address,
+                            status: delivery.status,
+                            date: delivery.assignedDate,
+                            statusColor: getStatusColor(delivery.status),
+                            context: context,
+                            customerId: delivery.customerId,
+                            customerName: delivery.customerName,
+                            orderId: delivery.packageId,
+                            isCustomer: false,
                           );
                         },
                       );
