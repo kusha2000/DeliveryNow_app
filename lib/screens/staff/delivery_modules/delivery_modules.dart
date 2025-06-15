@@ -191,7 +191,7 @@ class _DeliveriesModuleScreenState extends State<DeliveriesModuleScreen>
 
   IconData _getStatusIcon(String? status) {
     switch (status?.toLowerCase()) {
-      case 'online':
+      case 'available':
         return Icons.check_circle_rounded;
       case 'busy':
         return Icons.access_time_rounded;

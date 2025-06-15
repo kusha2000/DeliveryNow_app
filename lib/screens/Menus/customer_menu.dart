@@ -689,7 +689,7 @@ class _CustomerMenuState extends State<CustomerMenu>
 
     if (snapshot.hasData && snapshot.data != null) {
       switch (snapshot.data!.availabilityStatus.toUpperCase()) {
-        case 'ONLINE':
+        case 'AVAILABLE':
           statusColor = AppColors.successColor;
           break;
         case 'BUSY':
@@ -810,12 +810,12 @@ class _CustomerMenuState extends State<CustomerMenu>
 
   Widget _buildStatusBadge(AsyncSnapshot<UserModel?> snapshot) {
     Color statusColor = AppColors.successColor;
-    String statusText = 'ONLINE';
+    String statusText = 'AVAILABLE';
 
     if (snapshot.hasData && snapshot.data != null) {
       statusText = snapshot.data!.availabilityStatus.toUpperCase();
       switch (statusText) {
-        case 'ONLINE':
+        case 'AVAILABLE':
           statusColor = AppColors.successColor;
           break;
         case 'BUSY':

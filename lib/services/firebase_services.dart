@@ -161,6 +161,31 @@ class FirebaseServices {
     }
   }
 
+    // Fetch all deliveries for the rider
+  Future<List<DeliveryModel>> fetchAllDeliveriesForOneRider(
+      {required String riderId}) async {
+    try {
+      print('Fetching deliveries for rider: $riderId');
+      final snapshot = await FirebaseFirestore.instance
+          .collection('deliveries')
+          .where('riderId', isEqualTo: riderId)
+          .orderBy('assignedDate', descending: false)
+          .get();
+
+      print('Query returned ${snapshot.docs.length} documents');
+
+      List<DeliveryModel> deliveries = snapshot.docs
+          .map((doc) => DeliveryModel.fromMap(doc.data()))
+          .toList();
+
+      print('Converted ${deliveries.length} deliveries');
+      return deliveries;
+    } catch (e) {
+      print('Error fetching all deliveries: $e');
+      return [];
+    }
+  }
+
   //Riders
 
   Future<List<UserModel>> getAllRiders() async {
@@ -178,6 +203,114 @@ class FirebaseServices {
       return [];
     }
   }
+
+  
+  Future<void> updateAttendanceStatus(String status) async {
+    try {
+      String? userId = getCurrentUserID();
+      if (userId == null) throw Exception('User not logged in');
+
+      String dateKey = DateTime.now().toIso8601String().split('T')[0];
+      Timestamp startTime = Timestamp.now();
+
+      // Reference to the attendance log document for the current date
+      DocumentReference attendanceLogRef = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('attendance_logs')
+          .doc(dateKey);
+
+      // Check if the attendance log already exists for the date
+      DocumentSnapshot attendanceLogSnapshot = await attendanceLogRef.get();
+
+      // Update attendanceRecords in the user document
+      await _firestore.collection('users').doc(userId).update({
+        'attendanceRecords.$dateKey': status,
+        'availabilityStatus': status == 'absent' ? 'absent' : 'offline',
+      });
+
+      // Store detailed attendance log only if it doesn't already exist and status is "present"
+      if (status == "present" && !attendanceLogSnapshot.exists) {
+        await attendanceLogRef.set({
+          'startTime': startTime,
+          'date': dateKey,
+        }, SetOptions(merge: false));
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateAvailabilityStatus(String status) async {
+    try {
+      String? userId = getCurrentUserID();
+      if (userId == null) throw Exception('User not logged in');
+
+      String dateKey = DateTime.now().toIso8601String().split('T')[0];
+      Timestamp currentTime = Timestamp.now();
+
+      // Get the current attendance status
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+      String currentAttendanceStatus = (userDoc.data()
+              as Map<String, dynamic>?)?['attendanceRecords']?[dateKey] ??
+          'normal';
+
+      // Prevent availability changes if absent
+      if (currentAttendanceStatus == 'absent' && status != 'absent') {
+        throw Exception('Cannot change availability while absent');
+      }
+
+      // Update availabilityStatus in the user document
+      await _firestore.collection('users').doc(userId).update({
+        'availabilityStatus': status,
+      });
+
+      // Get the latest availability log for the current date
+      QuerySnapshot availabilityLogs = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('attendance_logs')
+          .doc(dateKey)
+          .collection('availability_logs')
+          .orderBy('startTime', descending: true)
+          .limit(1)
+          .get();
+
+      if (status == 'available') {
+        // Create a new availability log entry for online status
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('attendance_logs')
+            .doc(dateKey)
+            .collection('availability_logs')
+            .add({
+          'status': 'online',
+          'startTime': currentTime,
+          'endTime': null,
+        });
+      } else if (status == 'offline' && availabilityLogs.docs.isNotEmpty) {
+        // Update the latest availability log with endTime
+        DocumentSnapshot latestLog = availabilityLogs.docs.first;
+        if (latestLog['status'] == 'online' && latestLog['endTime'] == null) {
+          await _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('attendance_logs')
+              .doc(dateKey)
+              .collection('availability_logs')
+              .doc(latestLog.id)
+              .update({
+            'endTime': currentTime,
+          });
+        }
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 
   //Notifications
 
@@ -216,6 +349,75 @@ class FirebaseServices {
         .add(notificationData);
   }
 
+  //users
+
+    Future<void> updateProfileImage(String base64Image) async {
+    try {
+      String? userId = getCurrentUserID();
+      await _firestore.collection('users').doc(userId).update({
+        'profileImage': base64Image,
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    // Update user details in Firestore
+  Future<void> updateUserDetails({
+    required String uid,
+    required String firstName,
+    required String lastName,
+    required int? age,
+    required String? phoneNumber,
+    required String? gender,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'firstName': firstName,
+        'lastName': lastName,
+        'age': age,
+        'phoneNumber': phoneNumber,
+        'gender': gender,
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    // SOS Services
+
+  Future<String> createSOSRequest() async {
+    try {
+      final docRef = _firestore.collection('sos').doc();
+      String? userId = getCurrentUserID();
+
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+      UserModel? userData = await getUserData(userId);
+      if (userData == null) {
+        throw Exception('User data not found');
+      }
+
+      final sosData = {
+        'sosID': docRef.id,
+        'riderId': userId,
+        'riderName': '${userData.firstName} ${userData.lastName}',
+        'actionTaken': false,
+        'dateTime': Timestamp.now(),
+      };
+
+      await docRef.set(sosData);
+      return docRef.id;
+    } catch (e) {
+      print('Error creating SOS request: $e');
+      rethrow;
+    }
+  }
+
+
+
   //Streams
 
   Stream<List<DeliveryModel>> getCustomerDeliveries(String customerId) {
@@ -236,5 +438,18 @@ class FirebaseServices {
         .map((snapshot) => snapshot.docs
             .map((doc) => DeliveryModel.fromMap(doc.data()))
             .toList());
+  }
+
+  Stream<UserModel?> getUserDataStream() {
+    return _firestore
+        .collection('users')
+        .doc(getCurrentUserID())
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
+      }
+      return null;
+    });
   }
 }

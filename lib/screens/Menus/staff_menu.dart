@@ -1,6 +1,6 @@
 import 'package:delivery_now_app/screens/staff/dashboard/dashboard_screen.dart';
 import 'package:delivery_now_app/screens/staff/delivery_modules/delivery_modules.dart';
-import 'package:delivery_now_app/services/auth_service.dart';
+import 'package:delivery_now_app/screens/staff/staff_settings_screen/staff_settings_screen.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/models/user_model.dart';
@@ -420,7 +420,10 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
 
             GestureDetector(
               onTap: () {
-                AuthService().signOut();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => StaffSettingsScreen()));
               },
               child: Container(
                 padding: const EdgeInsets.all(12),
@@ -526,7 +529,7 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
 
     if (snapshot.hasData && snapshot.data != null) {
       switch (snapshot.data!.availabilityStatus.toUpperCase()) {
-        case 'ONLINE':
+        case 'AVAILABLE':
           statusColor = AppColors.successColor;
           break;
         case 'BUSY':
@@ -647,12 +650,12 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
 
   Widget _buildStatusBadge(AsyncSnapshot<UserModel?> snapshot) {
     Color statusColor = AppColors.successColor;
-    String statusText = 'ONLINE';
+    String statusText = 'AVAILABLE';
 
     if (snapshot.hasData && snapshot.data != null) {
       statusText = snapshot.data!.availabilityStatus.toUpperCase();
       switch (statusText) {
-        case 'ONLINE':
+        case 'AVAILABLE':
           statusColor = AppColors.successColor;
           break;
         case 'BUSY':
