@@ -184,7 +184,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         } else if (DateFormat('yyyy-MM-dd').format(date) ==
             DateFormat('yyyy-MM-dd').format(DateTime.now())) {
           switch (rider.availabilityStatus) {
-            case 'online':
+            case 'available':
               onlineCount++;
               break;
             case 'busy':
