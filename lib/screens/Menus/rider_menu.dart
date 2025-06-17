@@ -1,4 +1,5 @@
 import 'package:delivery_now_app/screens/rider/rider_settings_screen/rider_settings_screen.dart';
+import 'package:delivery_now_app/screens/rider/today_delivery_details_screen/todayDeliveryScreen.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/models/user_model.dart';
@@ -114,7 +115,13 @@ class _RiderMenuState extends State<RiderMenu> with TickerProviderStateMixin {
                                         AppColors.emeraldColor,
                                         AppColors.emeraldColor.withOpacity(0.7)
                                       ],
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TodayDeliveryScreen()));
+                                      },
                                     ),
                                     _buildEnhancedMenuCard(
                                       icon: Icons.delivery_dining_rounded,

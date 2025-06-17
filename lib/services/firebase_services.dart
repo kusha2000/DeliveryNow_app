@@ -161,7 +161,7 @@ class FirebaseServices {
     }
   }
 
-    // Fetch all deliveries for the rider
+  // Fetch all deliveries for the rider
   Future<List<DeliveryModel>> fetchAllDeliveriesForOneRider(
       {required String riderId}) async {
     try {
@@ -186,6 +186,47 @@ class FirebaseServices {
     }
   }
 
+  Future<DeliveryModel?> fetchSpecificDelivery({
+    required String deliveryId,
+  }) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('deliveries')
+          .doc(deliveryId)
+          .get();
+
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        final delivery = DeliveryModel.fromMap(data);
+        print('Fetched delivery with ID: $deliveryId');
+        return delivery;
+      } else {
+        print('No delivery found with ID: $deliveryId');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching delivery: $e');
+      return null;
+    }
+  }
+
+  // Update delivery status
+  Future<void> updateDeliveryStatus({
+    required String deliveryId,
+    required String status,
+  }) async {
+    try {
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'status': status,
+        'deliveryDate': status == 'delivered' ? Timestamp.now() : null,
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      print('Error updating delivery status: $e');
+      rethrow;
+    }
+  }
+
   //Riders
 
   Future<List<UserModel>> getAllRiders() async {
@@ -204,7 +245,6 @@ class FirebaseServices {
     }
   }
 
-  
   Future<void> updateAttendanceStatus(String status) async {
     try {
       String? userId = getCurrentUserID();
@@ -311,7 +351,6 @@ class FirebaseServices {
     }
   }
 
-
   //Notifications
 
   Future<void> saveDeliveryNotification({
@@ -351,7 +390,7 @@ class FirebaseServices {
 
   //users
 
-    Future<void> updateProfileImage(String base64Image) async {
+  Future<void> updateProfileImage(String base64Image) async {
     try {
       String? userId = getCurrentUserID();
       await _firestore.collection('users').doc(userId).update({
@@ -362,7 +401,7 @@ class FirebaseServices {
     }
   }
 
-    // Update user details in Firestore
+  // Update user details in Firestore
   Future<void> updateUserDetails({
     required String uid,
     required String firstName,
@@ -384,7 +423,7 @@ class FirebaseServices {
     }
   }
 
-    // SOS Services
+  // SOS Services
 
   Future<String> createSOSRequest() async {
     try {
@@ -416,7 +455,58 @@ class FirebaseServices {
     }
   }
 
+  // Reschedule Request Service
 
+  Future<String> createRescheduleRequest({
+    required String deliveryId,
+    required String riderId,
+    required String reason,
+    required Timestamp requestedDate,
+  }) async {
+    try {
+      final docRef = _firestore.collection('reschedule_requests').doc();
+      UserModel? userData = await getUserData(riderId);
+      if (userData == null) {
+        throw Exception('User data not found');
+      }
+
+      final rescheduleData = {
+        'requestId': docRef.id,
+        'deliveryId': deliveryId,
+        'riderId': riderId,
+        'riderName': '${userData.firstName} ${userData.lastName}',
+        'reason': reason,
+        'requestedDate': requestedDate,
+        'status': 'pending',
+        'createdAt': Timestamp.now(),
+        'approved': false,
+        'reviewedBy': null,
+        'reviewedAt': null,
+      };
+
+      await docRef.set(rescheduleData);
+      return docRef.id;
+    } catch (e) {
+      print('Error creating reschedule request: $e');
+      rethrow;
+    }
+  }
+
+  // Check if a pending reschedule request exists for a delivery
+  Future<bool> hasPendingRescheduleRequest(String deliveryId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('reschedule_requests')
+          .where('deliveryId', isEqualTo: deliveryId)
+          .where('status', isEqualTo: 'pending')
+          .limit(1)
+          .get();
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking reschedule request: $e');
+      return false;
+    }
+  }
 
   //Streams
 
@@ -451,5 +541,31 @@ class FirebaseServices {
       }
       return null;
     });
+  }
+
+  Stream<List<DeliveryModel>> streamDeliveriesByDate({
+    required String riderId,
+    required DateTime date,
+  }) {
+    try {
+      // Get start and end of the selected date
+      final startDate = DateTime(date.year, date.month, date.day);
+      final endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+      return _firestore
+          .collection('deliveries')
+          .where('riderId', isEqualTo: riderId)
+          .where('assignedDate',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .where('assignedDate',
+              isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => DeliveryModel.fromMap(doc.data()))
+              .toList());
+    } catch (e) {
+      print('Error streaming deliveries by date: $e');
+      rethrow;
+    }
   }
 }
