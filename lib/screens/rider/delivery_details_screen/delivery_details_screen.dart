@@ -769,7 +769,6 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
     );
   }
 
-
   Widget _buildFeedbackSection() {
     if (_selectedDelivery == null) return const SizedBox.shrink();
 
@@ -885,6 +884,14 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VoiceFeedbackScreen(
+                          deliveryId: _selectedDelivery!.id,
+                        ),
+                      ),
+                    );
                   },
                   child: _buildFeatureIndicator(
                     icon: Icons.mic_rounded,
@@ -899,7 +906,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               // Signature
               Expanded(
                 child: GestureDetector(
-                  onTap: (){},
+                  onTap: () {},
                   child: _buildFeatureIndicator(
                     icon: Icons.draw_rounded,
                     label: "Signature",
