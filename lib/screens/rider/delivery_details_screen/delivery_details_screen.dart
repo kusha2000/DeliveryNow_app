@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/packageQualityScreen.dart';
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/voiceFeedback.dart';
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/widgets/signature_pad.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -766,6 +769,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
     );
   }
 
+
   Widget _buildFeedbackSection() {
     if (_selectedDelivery == null) return const SizedBox.shrink();
 
@@ -880,7 +884,8 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               // Voice Feedback
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                  },
                   child: _buildFeatureIndicator(
                     icon: Icons.mic_rounded,
                     label: "Voice Feedback",
@@ -894,7 +899,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               // Signature
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: (){},
                   child: _buildFeatureIndicator(
                     icon: Icons.draw_rounded,
                     label: "Signature",
@@ -908,7 +913,16 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               // Package Images
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PackageQualityCheckScreen(
+                          deliveryId: _selectedDelivery!.id,
+                        ),
+                      ),
+                    );
+                  },
                   child: _buildFeatureIndicator(
                     icon: Icons.photo_library_rounded,
                     label: "Package Images",

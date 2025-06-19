@@ -227,6 +227,170 @@ class FirebaseServices {
     }
   }
 
+  // Stream deliveries by date for a specific rider
+  Stream<List<DeliveryModel>> getDeliveriesByDateStream({
+    required String riderId,
+    required DateTime date,
+  }) {
+    // Get start and end of the selected date
+    final startDate = DateTime(date.year, date.month, date.day);
+    final endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+    return _firestore
+        .collection('deliveries')
+        .where('riderId', isEqualTo: riderId)
+        .where('assignedDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('assignedDate', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => DeliveryModel.fromMap(doc.data()))
+          .toList();
+    });
+  }
+
+  Future<bool> checkDeliveryHasImages(String deliveryId) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('deliveries')
+          .doc(deliveryId)
+          .collection('images')
+          .limit(1)
+          .get();
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking images: $e');
+      return false;
+    }
+  }
+
+  // Stream a specific delivery by its ID
+  Stream<DeliveryModel?> getDeliveryByIdStream(String deliveryId) {
+    return _firestore
+        .collection('deliveries')
+        .doc(deliveryId)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return DeliveryModel.fromMap(snapshot.data()!);
+      }
+      return null;
+    });
+  }
+
+  Future<void> updateDeliveriesCount() async {
+    try {
+      String? userId = getCurrentUserID();
+      DocumentReference userDoc = _firestore.collection('users').doc(userId);
+
+      DocumentSnapshot snapshot = await userDoc.get();
+
+      int currentCount =
+          (snapshot.data() as Map<String, dynamic>?)?['deliveriesCount'] ?? 0;
+
+      await userDoc.update({
+        'deliveriesCount': currentCount + 1,
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<String>> getDeliveryImages(String deliveryId) async {
+    try {
+      // Get the collection of images
+      final snapshot = await _firestore
+          .collection('deliveries')
+          .doc(deliveryId)
+          .collection('images')
+          .orderBy('uploadedAt')
+          .get();
+
+      List<String> images = [];
+      for (var doc in snapshot.docs) {
+        images.add(doc.data()['imageData'] as String);
+      }
+
+      return images;
+    } catch (e) {
+      print('Error getting delivery images: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> loadExistingImages(
+      String deliveryId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('deliveries')
+          .doc(deliveryId)
+          .collection('images')
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.map((doc) {
+          final data = doc.data();
+          return {
+            'image': data['imageData'] as String,
+            'prediction': data['isDamaged'] == true ? 'Damage' : 'No Damage',
+          };
+        }).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error loading existing images: $e');
+      rethrow;
+    }
+  }
+
+  // Add these methods to your FirebaseServices class
+
+  Future<int> getExistingImageCount(String deliveryId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('deliveries')
+          .doc(deliveryId)
+          .collection('images')
+          .get();
+
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Error getting existing image count: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> loadSingleExistingImage(
+      String deliveryId, int index) async {
+    try {
+      final snapshot = await _firestore
+          .collection('deliveries')
+          .doc(deliveryId)
+          .collection('images')
+          .get();
+
+      if (snapshot.docs.isEmpty || index >= snapshot.docs.length) {
+        throw Exception('Image not found at index $index');
+      }
+
+      // Sort documents by their ID or a timestamp field if you have one
+      // This ensures consistent ordering across calls
+      final sortedDocs = snapshot.docs..sort((a, b) => a.id.compareTo(b.id));
+
+      final doc = sortedDocs[index];
+      final data = doc.data();
+
+      return {
+        'image': data['imageData'] as String,
+        'prediction': data['isDamaged'] == true ? 'Damage' : 'No Damage',
+      };
+    } catch (e) {
+      print('Error loading single existing image at index $index: $e');
+      rethrow;
+    }
+  }
+
   //Riders
 
   Future<List<UserModel>> getAllRiders() async {
