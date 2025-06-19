@@ -769,6 +769,18 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
     );
   }
 
+  Future<void> _showSignatureDialog() async {
+    await showDialog<String>(
+      context: context,
+      builder: (context) => Dialog(
+        child: SignaturePad(
+          onSave: (signature) => Navigator.pop(context, signature),
+          existingSignature: _selectedDelivery?.signature,
+        ),
+      ),
+    );
+  }
+
   Widget _buildFeedbackSection() {
     if (_selectedDelivery == null) return const SizedBox.shrink();
 
@@ -906,7 +918,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               // Signature
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: _showSignatureDialog,
                   child: _buildFeatureIndicator(
                     icon: Icons.draw_rounded,
                     label: "Signature",
