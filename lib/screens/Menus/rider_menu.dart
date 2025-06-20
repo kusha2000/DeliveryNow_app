@@ -1,3 +1,4 @@
+import 'package:delivery_now_app/screens/rider/dashboard_screen/rider_dashboard.dart';
 import 'package:delivery_now_app/screens/rider/delivery_details_screen/delivery_details_screen.dart';
 import 'package:delivery_now_app/screens/rider/rider_settings_screen/rider_settings_screen.dart';
 import 'package:delivery_now_app/screens/rider/today_delivery_details_screen/todayDeliveryScreen.dart';
@@ -109,6 +110,22 @@ class _RiderMenuState extends State<RiderMenu> with TickerProviderStateMixin {
                                   childAspectRatio: 0.95,
                                   children: [
                                     _buildEnhancedMenuCard(
+                                      icon: Icons.summarize_rounded,
+                                      title: 'Dashboard',
+                                      subtitle: 'Reports & Overview',
+                                      gradient: [
+                                        AppColors.violetColor,
+                                        AppColors.violetColor.withOpacity(0.7)
+                                      ],
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    RiderDashboard()));
+                                      },
+                                    ),
+                                    _buildEnhancedMenuCard(
                                       icon: Icons.calendar_today,
                                       title: 'Today\'s Delivery',
                                       subtitle: 'Current Schedule',
@@ -133,32 +150,12 @@ class _RiderMenuState extends State<RiderMenu> with TickerProviderStateMixin {
                                         AppColors.purpleColor.withOpacity(0.7)
                                       ],
                                       onTap: () {
-                                                                                Navigator.push(
+                                        Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     DeliveryDetailScreen()));
                                       },
-                                    ),
-                                    _buildEnhancedMenuCard(
-                                      icon: Icons.assessment,
-                                      title: 'Performance',
-                                      subtitle: 'Analytics & Stats',
-                                      gradient: [
-                                        AppColors.indigoColor,
-                                        AppColors.indigoColor.withOpacity(0.7)
-                                      ],
-                                      onTap: () {},
-                                    ),
-                                    _buildEnhancedMenuCard(
-                                      icon: Icons.summarize_rounded,
-                                      title: 'Daily Summary',
-                                      subtitle: 'Reports & Overview',
-                                      gradient: [
-                                        AppColors.violetColor,
-                                        AppColors.violetColor.withOpacity(0.7)
-                                      ],
-                                      onTap: () {},
                                     ),
                                   ],
                                 ),
@@ -192,7 +189,7 @@ class _RiderMenuState extends State<RiderMenu> with TickerProviderStateMixin {
             shaderCallback: (bounds) =>
                 AppColors.primaryGradient.createShader(bounds),
             child: const Text(
-              'Go Swift',
+              'Delivery Now',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w900,

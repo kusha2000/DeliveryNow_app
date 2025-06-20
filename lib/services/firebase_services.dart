@@ -297,6 +297,99 @@ class FirebaseServices {
     }
   }
 
+  // Get deliveries by date for a rider
+  Future<List<DeliveryModel>> getDeliveriesByDate({
+    required String riderId,
+    required DateTime date,
+  }) async {
+    try {
+      // Get start and end of the selected date
+      final startDate = DateTime(date.year, date.month, date.day);
+      final endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+      final snapshot = await _firestore
+          .collection('deliveries')
+          .where('riderId', isEqualTo: riderId)
+          .where('assignedDate',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .where('assignedDate',
+              isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+          .get();
+
+      return snapshot.docs
+          .map((doc) => DeliveryModel.fromMap(doc.data()))
+          .toList();
+    } catch (e) {
+      print('Error getting deliveries by date: $e');
+      rethrow;
+    }
+  }
+
+  // Update delivery signature
+  Future<void> updateDeliverySignature({
+    required String deliveryId,
+    required String signatureBase64,
+  }) async {
+    try {
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'signature': signatureBase64,
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      print('Error updating signature: $e');
+      rethrow;
+    }
+  }
+
+  // Update delivery feedback
+  Future<void> updateDeliveryFeedback({
+    required String deliveryId,
+    required double stars,
+    required String feedback,
+  }) async {
+    try {
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'feedback': feedback,
+        'stars': stars,
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      print('Error updating feedback: $e');
+      rethrow;
+    }
+  }
+
+  // Delivery-package Images
+  Future<void> uploadDeliveryImage({
+    required String deliveryId,
+    required String imageBase64,
+    required int imageIndex,
+    bool isDamaged = false,
+  }) async {
+    try {
+      await _firestore
+          .collection('deliveries')
+          .doc(deliveryId)
+          .collection('images')
+          .doc(imageIndex.toString())
+          .set({
+        'imageData': imageBase64,
+        'uploadedAt': Timestamp.now(),
+        'isDamaged': isDamaged,
+      });
+
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'imageRefs': FieldValue.arrayUnion([imageIndex.toString()]),
+        'updatedAt': Timestamp.now(),
+        'hasDamage':
+            FieldValue.arrayUnion(isDamaged ? [imageIndex.toString()] : []),
+      });
+    } catch (e) {
+      print('Error uploading image $imageIndex: $e');
+      rethrow;
+    }
+  }
+
   Future<List<String>> getDeliveryImages(String deliveryId) async {
     try {
       // Get the collection of images
@@ -387,6 +480,85 @@ class FirebaseServices {
       };
     } catch (e) {
       print('Error loading single existing image at index $index: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> clearDeliveryImages(String deliveryId) async {
+    try {
+      // Get existing image references
+      DocumentSnapshot deliveryDoc =
+          await _firestore.collection('deliveries').doc(deliveryId).get();
+
+      // Delete all existing images in the subcollection
+      if (deliveryDoc.exists) {
+        final data = deliveryDoc.data() as Map<String, dynamic>?;
+        if (data != null && data.containsKey('imageRefs')) {
+          List<String> imageRefs = List<String>.from(data['imageRefs'] ?? []);
+
+          // Delete each image document
+          for (String imageRef in imageRefs) {
+            await _firestore
+                .collection('deliveries')
+                .doc(deliveryId)
+                .collection('images')
+                .doc(imageRef)
+                .delete();
+          }
+        }
+
+        // Reset image references in the main document
+        await _firestore.collection('deliveries').doc(deliveryId).update({
+          'imageRefs': [],
+          'images': [], // Clear legacy field if exists
+          'updatedAt': Timestamp.now(),
+        });
+      }
+    } catch (e) {
+      print('Error clearing delivery images: $e');
+      rethrow;
+    }
+  }
+
+// Delivery - Voice Feedbacks
+
+// Update delivery voice feedback
+  Future<void> updateDeliveryVoiceFeedback({
+    required String deliveryId,
+    required String voiceFeedbackBase64,
+    String? voiceFeedbackText,
+    String? voiceFeedbackPrediction,
+    String? voiceFeedbackSuggestion,
+  }) async {
+    try {
+      final updateData = {
+        'voiceFeedback': voiceFeedbackBase64,
+        'voiceFeedbackText': voiceFeedbackText ?? '',
+        'voiceFeedbackPrediction': voiceFeedbackPrediction ?? '',
+        'voiceFeedbackSuggestion': voiceFeedbackSuggestion ?? '',
+        'updatedAt': Timestamp.now(),
+      };
+      await _firestore
+          .collection('deliveries')
+          .doc(deliveryId)
+          .update(updateData);
+    } catch (e) {
+      print('Error updating voice feedback: $e');
+      rethrow;
+    }
+  }
+
+  Future<DeliveryModel?> getDeliveryById(String deliveryId) async {
+    try {
+      final doc =
+          await _firestore.collection('deliveries').doc(deliveryId).get();
+
+      if (doc.exists) {
+        return DeliveryModel.fromMap(doc.data()!);
+      }
+      return null;
+    } catch (e) {
+      print('Error getting delivery by ID: $e');
       rethrow;
     }
   }
@@ -731,5 +903,17 @@ class FirebaseServices {
       print('Error streaming deliveries by date: $e');
       rethrow;
     }
+  }
+
+  // Stream latest 3 deliveries for a specific rider (all statuses)
+  Stream<List<DeliveryModel>> getLatestRiderDeliveries(String riderId) {
+    return _firestore
+        .collection('deliveries')
+        .where('riderId', isEqualTo: riderId)
+        .limit(3)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => DeliveryModel.fromMap(doc.data()))
+            .toList());
   }
 }
