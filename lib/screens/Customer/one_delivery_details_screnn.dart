@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:delivery_now_app/screens/Customer/packageQualityScreen.dart';
 import 'package:delivery_now_app/screens/Customer/voiceFeedback.dart';
+import 'package:delivery_now_app/screens/Customer/widgets/signature_pad.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -126,6 +127,39 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
     }
   }
 
+  Future<void> _saveSignature(String signatureBase64) async {
+    if (_selectedDelivery == null) return;
+
+    try {
+      await _firebaseServices.updateDeliverySignature(
+        deliveryId: _selectedDelivery!.id,
+        signatureBase64: signatureBase64,
+      );
+
+      showToast('Signature saved successfully', AppColors.successColor);
+    } catch (e) {
+      showToast('Error saving signature: $e', AppColors.errorColor);
+    }
+  }
+
+  Future<void> _showSignatureDialog() async {
+    final signature = await showDialog<String>(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: AppColors.modalColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: CustomerSignaturePad(
+          onSave: (signature) => Navigator.pop(context, signature),
+          existingSignature: _selectedDelivery?.signature,
+        ),
+      ),
+    );
+
+    if (signature != null) {
+      await _saveSignature(signature);
+    }
+  }
+
   Future<void> _saveTextFeedback() async {
     if (_selectedDelivery == null) return;
 
@@ -232,8 +266,6 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                 );
                 return;
               }
-
-              
             },
           ),
         ),
@@ -716,7 +748,7 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: (){},
+                      onTap: _showSignatureDialog,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Column(
