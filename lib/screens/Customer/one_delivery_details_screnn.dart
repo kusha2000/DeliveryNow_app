@@ -1,10 +1,10 @@
 // ignore_for_file: unused_field
 
 import 'dart:async';
+import 'package:delivery_now_app/screens/Customer/packageQualityScreen.dart';
 import 'package:delivery_now_app/screens/Customer/voiceFeedback.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
-
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:delivery_now_app/models/delivery_model.dart';
 import 'package:delivery_now_app/utils/colors.dart';
@@ -125,9 +125,6 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
       setState(() => _isCheckingImages = false);
     }
   }
-
-  
-
 
   Future<void> _saveTextFeedback() async {
     if (_selectedDelivery == null) return;
@@ -472,7 +469,14 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CustomerPackageQualityCheckScreen(
+                        deliveryId: _selectedDelivery!.id,
+                      ),
+                    ),
+                  );
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -712,7 +716,7 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: (),
+                      onTap: (){},
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Column(
