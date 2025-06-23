@@ -13,9 +13,6 @@ class DeliveryModel {
   final String status;
   final String? packageDetails;
   final String? voiceFeedback;
-  final String? voiceFeedbackText;
-  final String? voiceFeedbackPrediction;
-  final String? voiceFeedbackSuggestion;
   final String? typeOfOrder;
   final String? deliveryTime;
   final String? feedback;
@@ -43,9 +40,6 @@ class DeliveryModel {
     required this.status,
     this.packageDetails,
     this.voiceFeedback,
-    this.voiceFeedbackText,
-    this.voiceFeedbackPrediction,
-    this.voiceFeedbackSuggestion,
     this.typeOfOrder,
     this.deliveryTime,
     this.feedback,
@@ -75,9 +69,6 @@ class DeliveryModel {
       'status': status,
       'packageDetails': packageDetails,
       'voiceFeedback': voiceFeedback,
-      'voiceFeedbackText': voiceFeedbackText,
-      'voiceFeedbackPrediction': voiceFeedbackPrediction,
-      'voiceFeedbackSuggestion': voiceFeedbackSuggestion,
       'typeOfOrder': typeOfOrder,
       'deliveryTime': deliveryTime,
       'feedback': feedback,
@@ -108,9 +99,6 @@ class DeliveryModel {
       status: map['status'] as String? ?? 'pending',
       packageDetails: map['packageDetails'] as String?,
       voiceFeedback: map['voiceFeedback'] as String?,
-      voiceFeedbackText: map['voiceFeedbackText'] as String?,
-      voiceFeedbackPrediction: map['voiceFeedbackPrediction'] as String?,
-      voiceFeedbackSuggestion: map['voiceFeedbackSuggestion'] as String?,
       typeOfOrder: map['typeOfOrder'] as String?,
       deliveryTime: map['deliveryTime'] as String?,
       feedback: map['feedback'] as String?,

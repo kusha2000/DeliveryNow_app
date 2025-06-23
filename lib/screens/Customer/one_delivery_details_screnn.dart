@@ -1,9 +1,10 @@
 // ignore_for_file: unused_field
 
 import 'dart:async';
-
+import 'package:delivery_now_app/screens/Customer/voiceFeedback.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
+
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:delivery_now_app/models/delivery_model.dart';
 import 'package:delivery_now_app/utils/colors.dart';
@@ -125,6 +126,9 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
     }
   }
 
+  
+
+
   Future<void> _saveTextFeedback() async {
     if (_selectedDelivery == null) return;
 
@@ -152,7 +156,8 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
               ),
             )
           : _selectedDelivery == null
@@ -231,6 +236,7 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                 return;
               }
 
+              
             },
           ),
         ),
@@ -272,7 +278,8 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader("Package Information", Icons.inventory_2_outlined),
+          _buildSectionHeader(
+              "Package Information", Icons.inventory_2_outlined),
           const SizedBox(height: 16),
           _buildPackageInfoCard(),
           const SizedBox(height: 24),
@@ -284,7 +291,8 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
           const SizedBox(height: 16),
           _buildFeedbackCard(hasTextFeedback),
           const SizedBox(height: 24),
-          _buildSectionHeader("Delivery Confirmation", Icons.check_circle_outline),
+          _buildSectionHeader(
+              "Delivery Confirmation", Icons.check_circle_outline),
           const SizedBox(height: 16),
           _buildConfirmationCard(hasSignature),
           const SizedBox(height: 20),
@@ -370,7 +378,8 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, Color iconColor) {
+  Widget _buildInfoRow(
+      IconData icon, String label, String value, Color iconColor) {
     return Row(
       children: [
         Container(
@@ -541,8 +550,12 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     child: Icon(
-                      index < _selectedStars ? Icons.star_rounded : Icons.star_border_rounded,
-                      color: index < _selectedStars ? AppColors.amberColor : AppColors.grey500,
+                      index < _selectedStars
+                          ? Icons.star_rounded
+                          : Icons.star_border_rounded,
+                      color: index < _selectedStars
+                          ? AppColors.amberColor
+                          : AppColors.grey500,
                       size: 32,
                     ),
                   ),
@@ -598,7 +611,9 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: (hasTextFeedback ? AppColors.successColor : AppColors.errorColor)
+                  color: (hasTextFeedback
+                          ? AppColors.successColor
+                          : AppColors.errorColor)
                       .withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
@@ -616,7 +631,9 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        hasTextFeedback ? Icons.check_circle_outline : Icons.save_outlined,
+                        hasTextFeedback
+                            ? Icons.check_circle_outline
+                            : Icons.save_outlined,
                         color: AppColors.whiteColor,
                         size: 20,
                       ),
@@ -682,7 +699,9 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: (hasSignature ? AppColors.successColor : AppColors.cyanColor)
+                        color: (hasSignature
+                                ? AppColors.successColor
+                                : AppColors.cyanColor)
                             .withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
@@ -693,13 +712,15 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: (){},
+                      onTap: (),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Column(
                           children: [
                             Icon(
-                              hasSignature ? Icons.check_circle : Icons.draw_rounded,
+                              hasSignature
+                                  ? Icons.check_circle
+                                  : Icons.draw_rounded,
                               color: AppColors.whiteColor,
                               size: 24,
                             ),
@@ -733,7 +754,9 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: (_hasVoiceFeedback ? AppColors.successColor : AppColors.pinkColor)
+                        color: (_hasVoiceFeedback
+                                ? AppColors.successColor
+                                : AppColors.pinkColor)
                             .withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
@@ -745,14 +768,23 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () {
-
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CustomerVoiceFeedbackScreen(
+                              deliveryId: _selectedDelivery!.id,
+                            ),
+                          ),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Column(
                           children: [
                             Icon(
-                              _hasVoiceFeedback ? Icons.check_circle : Icons.mic_rounded,
+                              _hasVoiceFeedback
+                                  ? Icons.check_circle
+                                  : Icons.mic_rounded,
                               color: AppColors.whiteColor,
                               size: 24,
                             ),
