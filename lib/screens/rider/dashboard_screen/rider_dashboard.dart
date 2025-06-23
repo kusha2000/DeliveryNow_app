@@ -686,6 +686,13 @@ class _RiderDashboardState extends State<RiderDashboard> {
                         buildSectionTitle("Recent Deliveries"),
                         TextButton(
                           onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AllDeliveriesScreen(riderId: _riderId!),
+                              ),
+                            );
                           },
                           child: Text(
                             'View All',
