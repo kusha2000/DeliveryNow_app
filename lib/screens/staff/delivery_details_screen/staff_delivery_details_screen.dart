@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/packageQualityScreen.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -909,7 +910,16 @@ class _StaffDeliveryDetailScreenState extends State<StaffDeliveryDetailScreen> {
               // Package Images
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PackageQualityCheckScreen(
+                          deliveryId: _selectedDelivery!.id,
+                        ),
+                      ),
+                    );
+                  },
                   child: _buildFeatureIndicator(
                     icon: Icons.photo_library_rounded,
                     label: "Package Images",
