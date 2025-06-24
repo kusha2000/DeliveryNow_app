@@ -6,6 +6,7 @@ import 'package:delivery_now_app/screens/Customer/voiceFeedback.dart';
 import 'package:delivery_now_app/screens/Customer/widgets/signature_pad.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:delivery_now_app/screens/customer/chat_screen.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:delivery_now_app/models/delivery_model.dart';
 import 'package:delivery_now_app/utils/colors.dart';
@@ -266,6 +267,18 @@ class _OneDeliveryDetailScreenState extends State<OneDeliveryDetailScreen> {
                 );
                 return;
               }
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    customerId: _selectedDelivery!.customerId,
+                    customerName: _selectedDelivery!.customerName,
+                    orderId: _selectedDelivery!.packageId,
+                    isCustomer: false,
+                  ),
+                ),
+              );
             },
           ),
         ),
