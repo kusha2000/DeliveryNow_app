@@ -175,7 +175,7 @@ class _AllFeedbacksScreenState extends State<AllFeedbacksScreen> {
                   child: modernFeedbackCard(
                     delivery.customerName,
                     delivery.stars,
-                    delivery.voiceFeedbackText,
+                    delivery.feedback,
                     isPlaying: _isPlayingMap[delivery.id] ?? false,
                     onPlay: () =>
                         _playAudio(delivery.voiceFeedback!, delivery.id),

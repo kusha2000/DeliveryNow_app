@@ -1,4 +1,5 @@
 import 'package:delivery_now_app/screens/staff/dashboard/dashboard_screen.dart';
+import 'package:delivery_now_app/screens/staff/delivery_details_screen/staff_delivery_details_screen.dart';
 import 'package:delivery_now_app/screens/staff/delivery_modules/delivery_modules.dart';
 import 'package:delivery_now_app/screens/staff/staff_settings_screen/staff_settings_screen.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -148,7 +149,13 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
                                         AppColors.accentColor,
                                         AppColors.accentColor.withOpacity(0.7)
                                       ],
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    StaffDeliveryDetailScreen()));
+                                      },
                                     ),
                                     _buildEnhancedMenuCard(
                                       icon: Icons.notifications_none_rounded,
@@ -158,7 +165,9 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
                                         AppColors.errorColor,
                                         AppColors.errorColor.withOpacity(0.7)
                                       ],
-                                      onTap: () {},
+                                      onTap: () {
+                                        
+                                      },
                                     ),
                                   ],
                                 ),
@@ -192,7 +201,7 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
             shaderCallback: (bounds) =>
                 AppColors.primaryGradient.createShader(bounds),
             child: const Text(
-              'Go Swift',
+              'DeliveryNow',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w900,

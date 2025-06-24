@@ -538,24 +538,6 @@ class _DashboardScreenState extends State<DashboardScreen>
               ),
             ],
           ),
-          if (delivery.voiceFeedbackPrediction != null) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.backgroundColor.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                delivery.voiceFeedbackPrediction!,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                  color: AppColors.textSecondaryColor,
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );
