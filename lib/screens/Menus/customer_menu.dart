@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_now_app/models/delivery_model.dart';
-import 'package:delivery_now_app/services/auth_service.dart';
+import 'package:delivery_now_app/screens/Customer/customer_settings_screen.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
 import 'package:delivery_now_app/services/notification_services.dart';
 import 'package:delivery_now_app/shared/widgets/customer_delivery_item_with_chat_widget.dart';
@@ -174,6 +174,7 @@ class _CustomerMenuState extends State<CustomerMenu>
                                     "$capitalizedFirstName $capitalizedLastName",
                                 orderId: delivery.packageId,
                                 isCustomer: true,
+                                deliveryId: delivery.id,
                               ),
                             );
                           },
@@ -583,7 +584,12 @@ class _CustomerMenuState extends State<CustomerMenu>
             // Quick Action Button
             GestureDetector(
               onTap: () {
-                AuthService().signOut();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CustomerSettingsScreen(),
+                  ),
+                );
               },
               child: Container(
                 padding: const EdgeInsets.all(12),
