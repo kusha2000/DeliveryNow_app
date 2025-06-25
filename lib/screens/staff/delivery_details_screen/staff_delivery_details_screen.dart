@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:delivery_now_app/screens/rider/delivery_details_screen/packageQualityScreen.dart';
 import 'package:delivery_now_app/screens/rider/delivery_details_screen/voiceFeedback.dart';
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/widgets/signature_pad.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -769,6 +770,18 @@ class _StaffDeliveryDetailScreenState extends State<StaffDeliveryDetailScreen> {
     );
   }
 
+  Future<void> _showSignatureDialog() async {
+    await showDialog<String>(
+      context: context,
+      builder: (context) => Dialog(
+        child: SignaturePad(
+          onSave: (signature) => Navigator.pop(context, signature),
+          existingSignature: _selectedDelivery?.signature,
+        ),
+      ),
+    );
+  }
+
   Widget _buildFeedbackSection() {
     if (_selectedDelivery == null) return const SizedBox.shrink();
 
@@ -906,7 +919,7 @@ class _StaffDeliveryDetailScreenState extends State<StaffDeliveryDetailScreen> {
               // Signature
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: _showSignatureDialog,
                   child: _buildFeatureIndicator(
                     icon: Icons.draw_rounded,
                     label: "Signature",
