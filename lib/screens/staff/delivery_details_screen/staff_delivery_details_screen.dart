@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:delivery_now_app/screens/rider/delivery_details_screen/packageQualityScreen.dart';
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/voiceFeedback.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_now_app/services/firebase_services.dart';
@@ -882,7 +883,16 @@ class _StaffDeliveryDetailScreenState extends State<StaffDeliveryDetailScreen> {
               // Voice Feedback
               Expanded(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VoiceFeedbackScreen(
+                          deliveryId: _selectedDelivery!.id,
+                        ),
+                      ),
+                    );
+                  },
                   child: _buildFeatureIndicator(
                     icon: Icons.mic_rounded,
                     label: "Voice Feedback",
