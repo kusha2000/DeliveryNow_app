@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:delivery_now_app/shared/screens/rider_tracking_screen.dart';
 import 'package:delivery_now_app/shared/widgets/customer_delivery_item_with_chat_widget.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
@@ -390,6 +391,12 @@ class _DeliveriesModuleScreenState extends State<DeliveriesModuleScreen>
                   return;
                 }
                 // Add tracking functionality here
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RiderTrackingScreen(
+                              userId: _selectedDriver?.uid,
+                            )));
               },
             ),
           ),
@@ -707,9 +714,9 @@ class _DeliveriesModuleScreenState extends State<DeliveriesModuleScreen>
                             title: "Assign New Delivery",
                             subtitle: "Create and assign delivery orders",
                             icon: Icons.add_circle_rounded,
-                            gradient:
-                                AppDecorations.containerProfessionalDarkDecoration()
-                                    .gradient as LinearGradient,
+                            gradient: AppDecorations
+                                    .containerProfessionalDarkDecoration()
+                                .gradient as LinearGradient,
                             isEnabled: _selectedDriver?.availabilityStatus !=
                                     'absent' &&
                                 _selectedDriver != null,
@@ -740,9 +747,9 @@ class _DeliveriesModuleScreenState extends State<DeliveriesModuleScreen>
                             title: "Edit/Cancel Deliveries",
                             subtitle: "Modify existing delivery orders",
                             icon: Icons.edit_rounded,
-                            gradient:
-                                AppDecorations.containerProfessionalMediumDecoration()
-                                    .gradient as LinearGradient,
+                            gradient: AppDecorations
+                                    .containerProfessionalMediumDecoration()
+                                .gradient as LinearGradient,
                             isEnabled: _selectedDriver != null,
                             onTap: () {
                               if (_selectedDriver == null) {

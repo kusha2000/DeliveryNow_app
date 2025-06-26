@@ -1,3 +1,4 @@
+import 'package:delivery_now_app/screens/rider/delivery_details_screen/delivery_details_screen.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -551,6 +552,12 @@ class _DeliveryLocationMapState extends State<DeliveryLocationMap> {
         _isDeliveryStarted = false;
         _deliveryTime = deliveryTime;
       });
+
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DeliveryDetailScreen(),
+          ));
     } catch (e) {
       Navigator.pop(context);
       showToast('Failed to confirm delivery: $e', AppColors.redColor);

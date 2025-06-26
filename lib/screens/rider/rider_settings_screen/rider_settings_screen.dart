@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:delivery_now_app/services/auth_service.dart';
+import 'package:delivery_now_app/shared/screens/all_deliveries.dart';
 import 'package:delivery_now_app/shared/widgets/setting_item_widget.dart';
 import 'package:delivery_now_app/utils/show_toast.dart';
 import 'package:flutter/material.dart';
@@ -1216,6 +1217,14 @@ class _RiderSettingsScreenState extends State<RiderSettingsScreen>
                                       AppColors.tealColor.withOpacity(0.1),
                                   gradientEnd: AppColors.cardColor,
                                   onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AllDeliveriesScreen(
+                                                riderId: user.uid),
+                                      ),
+                                    );
                                   },
                                 ),
                                 buildModernSettingItem(
