@@ -29,6 +29,14 @@ class FirebaseServices {
   }
 
   //Delivery Functions
+
+  Stream<QuerySnapshot> getAllDeliveriesStream() {
+    return FirebaseFirestore.instance
+        .collection('deliveries')
+        .orderBy('assignedDate', descending: true)
+        .snapshots();
+  }
+
   Future<String> assignNewDelivery({
     required String packageId,
     required String customerName,
@@ -101,6 +109,25 @@ class FirebaseServices {
         'priority': priority,
         'typeOfOrder': typeOfOrder,
         'price': price,
+        'updatedAt': Timestamp.now(),
+      });
+    } catch (e) {
+      print('Error updating delivery details: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateDeliveryWithRiderDetails({
+    required String deliveryId,
+    required Timestamp assignedDate,
+    required String riderId,
+    required String riderName,
+  }) async {
+    try {
+      await _firestore.collection('deliveries').doc(deliveryId).update({
+        'assignedDate': assignedDate,
+        'riderId': riderId,
+        'riderName': riderName,
         'updatedAt': Timestamp.now(),
       });
     } catch (e) {
@@ -250,6 +277,26 @@ class FirebaseServices {
     });
   }
 
+  Stream<List<DeliveryModel>> getAllDeliveriesByDateStream({
+    required DateTime date,
+  }) {
+    // Get start and end of the selected date
+    final startDate = DateTime(date.year, date.month, date.day);
+    final endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+    return _firestore
+        .collection('deliveries')
+        .where('assignedDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('assignedDate', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => DeliveryModel.fromMap(doc.data()))
+          .toList();
+    });
+  }
+
   Future<bool> checkDeliveryHasImages(String deliveryId) async {
     try {
       final querySnapshot = await FirebaseFirestore.instance
@@ -364,7 +411,6 @@ class FirebaseServices {
     required String deliveryId,
     required String imageBase64,
     required int imageIndex,
-    bool isDamaged = false,
   }) async {
     try {
       await _firestore
@@ -375,14 +421,11 @@ class FirebaseServices {
           .set({
         'imageData': imageBase64,
         'uploadedAt': Timestamp.now(),
-        'isDamaged': isDamaged,
       });
 
       await _firestore.collection('deliveries').doc(deliveryId).update({
         'imageRefs': FieldValue.arrayUnion([imageIndex.toString()]),
         'updatedAt': Timestamp.now(),
-        'hasDamage':
-            FieldValue.arrayUnion(isDamaged ? [imageIndex.toString()] : []),
       });
     } catch (e) {
       print('Error uploading image $imageIndex: $e');
@@ -526,16 +569,10 @@ class FirebaseServices {
   Future<void> updateDeliveryVoiceFeedback({
     required String deliveryId,
     required String voiceFeedbackBase64,
-    String? voiceFeedbackText,
-    String? voiceFeedbackPrediction,
-    String? voiceFeedbackSuggestion,
   }) async {
     try {
       final updateData = {
         'voiceFeedback': voiceFeedbackBase64,
-        'voiceFeedbackText': voiceFeedbackText ?? '',
-        'voiceFeedbackPrediction': voiceFeedbackPrediction ?? '',
-        'voiceFeedbackSuggestion': voiceFeedbackSuggestion ?? '',
         'updatedAt': Timestamp.now(),
       };
       await _firestore
@@ -761,6 +798,17 @@ class FirebaseServices {
 
   // SOS Services
 
+  Stream<QuerySnapshot> getAllSOSStream() {
+    return FirebaseFirestore.instance
+        .collection('sos')
+        .orderBy('dateTime', descending: true)
+        .snapshots();
+  }
+
+  Future deleteSOS(String sosId) async {
+    await FirebaseFirestore.instance.collection('sos').doc(sosId).delete();
+  }
+
   Future<String> createSOSRequest() async {
     try {
       final docRef = _firestore.collection('sos').doc();
@@ -792,6 +840,13 @@ class FirebaseServices {
   }
 
   // Reschedule Request Service
+
+  Stream<QuerySnapshot> getAllRescheduleStream() {
+    return FirebaseFirestore.instance
+        .collection('reschedule_requests')
+        .where('status', isEqualTo: 'pending')
+        .snapshots();
+  }
 
   Future<String> createRescheduleRequest({
     required String deliveryId,
@@ -841,6 +896,34 @@ class FirebaseServices {
     } catch (e) {
       print('Error checking reschedule request: $e');
       return false;
+    }
+  }
+
+  Future<void> updateRequestedDeliveryDetails({
+    required String requestId,
+    required Timestamp assignedDate,
+    required String newRiderId,
+    required String newRiderName,
+  }) async {
+    try {
+      String? userId = getCurrentUserID();
+
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+      await _firestore.collection('reschedule_requests').doc(requestId).update({
+        'status': 'approved',
+        'approved': true,
+        'reviewedBy': userId,
+        'reviewedAt': Timestamp.now(),
+        'newRiderId': newRiderId,
+        'newRiderName': newRiderName,
+        'newDate': assignedDate,
+      });
+    } catch (e) {
+      print('Error updating delivery details: $e');
+      rethrow;
     }
   }
 

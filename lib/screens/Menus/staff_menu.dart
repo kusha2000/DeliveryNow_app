@@ -1,3 +1,4 @@
+import 'package:delivery_now_app/screens/staff/alert_panel_screen/alerts_panel_screen.dart';
 import 'package:delivery_now_app/screens/staff/dashboard/dashboard_screen.dart';
 import 'package:delivery_now_app/screens/staff/delivery_details_screen/staff_delivery_details_screen.dart';
 import 'package:delivery_now_app/screens/staff/delivery_modules/delivery_modules.dart';
@@ -166,7 +167,11 @@ class _StaffMenuState extends State<StaffMenu> with TickerProviderStateMixin {
                                         AppColors.errorColor.withOpacity(0.7)
                                       ],
                                       onTap: () {
-                                        
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AlertsPanelScreen()));
                                       },
                                     ),
                                   ],
