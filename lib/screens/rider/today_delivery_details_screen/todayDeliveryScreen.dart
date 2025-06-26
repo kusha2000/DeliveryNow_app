@@ -312,17 +312,17 @@ class _TodayDeliveryScreenState extends State<TodayDeliveryScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent, // Set to transparent
         elevation: 0,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.riderColor.withOpacity(0.9),
-                AppColors.riderColor.withOpacity(0.6),
-                AppColors.riderColor.withOpacity(0.3),
+                AppColors.primaryColor,
+                AppColors.violetColor,
+                AppColors.indigoColor,
               ],
             ),
           ),

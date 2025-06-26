@@ -230,8 +230,21 @@ class _StaffDeliveryDetailScreenState extends State<StaffDeliveryDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: Colors.transparent, // Set to transparent
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primaryColor,
+                AppColors.violetColor,
+                AppColors.indigoColor,
+              ],
+            ),
+          ),
+        ),
         leading: IconButton(
           icon:
               const Icon(Icons.arrow_back_rounded, color: AppColors.whiteColor),
