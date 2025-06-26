@@ -78,6 +78,25 @@ class AppDecorations {
     );
   }
 
+  static BoxDecoration buttonGradientDecoration({
+    double borderRadius = 16,
+    List<BoxShadow>? boxShadow,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        colors: [AppColors.primaryColor, AppColors.secondaryColor],
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.primaryColor.withOpacity(0.3),
+          blurRadius: 12,
+          offset: const Offset(0, 6),
+        ),
+      ],
+    );
+  }
+
   static BoxDecoration containerTealGradientDecoration({
     double borderRadius = 16,
     List<BoxShadow>? boxShadow,
@@ -449,97 +468,97 @@ class AppDecorations {
     );
   }
 
-static BoxDecoration containerDarkForestDecoration({
-  double borderRadius = 16,
-  List<BoxShadow>? boxShadow,
-}) {
-  return BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Color(0xFF059669), // Emerald 600
-        Color(0xFF047857), // Emerald 700
-        Color(0xFF065F46), // Emerald 800
-        Color(0xFF064E3B), // Emerald 900
-        Color(0xFF022C22), // Emerald 950
-      ],
-      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
-    ),
-    borderRadius: BorderRadius.circular(borderRadius),
-    border: Border.all(
-      color: Color(0xFF10B981).withOpacity(0.5),
-      width: 1.5,
-    ),
-    boxShadow: boxShadow ??
-        [
-          BoxShadow(
-            color: Color(0xFF059669).withOpacity(0.4),
-            spreadRadius: 0,
-            blurRadius: 32,
-            offset: Offset(0, 16),
-          ),
-          BoxShadow(
-            color: Color(0xFF022C22).withOpacity(0.8),
-            spreadRadius: 2,
-            blurRadius: 20,
-            offset: Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            spreadRadius: 0,
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          ),
+  static BoxDecoration containerDarkForestDecoration({
+    double borderRadius = 16,
+    List<BoxShadow>? boxShadow,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF059669), // Emerald 600
+          Color(0xFF047857), // Emerald 700
+          Color(0xFF065F46), // Emerald 800
+          Color(0xFF064E3B), // Emerald 900
+          Color(0xFF022C22), // Emerald 950
         ],
-  );
-}
+        stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(
+        color: Color(0xFF10B981).withOpacity(0.5),
+        width: 1.5,
+      ),
+      boxShadow: boxShadow ??
+          [
+            BoxShadow(
+              color: Color(0xFF059669).withOpacity(0.4),
+              spreadRadius: 0,
+              blurRadius: 32,
+              offset: Offset(0, 16),
+            ),
+            BoxShadow(
+              color: Color(0xFF022C22).withOpacity(0.8),
+              spreadRadius: 2,
+              blurRadius: 20,
+              offset: Offset(0, 10),
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              spreadRadius: 0,
+              blurRadius: 12,
+              offset: Offset(0, 6),
+            ),
+          ],
+    );
+  }
 
   static BoxDecoration containerDarkEleganceDecoration({
-  double borderRadius = 16,
-  List<BoxShadow>? boxShadow,
-}) {
-  return BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Color(0xFF4B5563), // Gray 600
-        Color(0xFF374151), // Gray 700
-        Color(0xFF1F2937), // Gray 800
-        Color(0xFF111827), // Gray 900
-        Color(0xFF030712), // Gray 950
-      ],
-      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
-    ),
-    borderRadius: BorderRadius.circular(borderRadius),
-    border: Border.all(
-      color: Color(0xFF6B7280).withOpacity(0.5),
-      width: 1.5,
-    ),
-    boxShadow: boxShadow ??
-        [
-          BoxShadow(
-            color: Color(0xFF000000).withOpacity(0.6),
-            spreadRadius: 0,
-            blurRadius: 32,
-            offset: Offset(0, 16),
-          ),
-          BoxShadow(
-            color: Color(0xFF111827).withOpacity(0.8),
-            spreadRadius: 2,
-            blurRadius: 20,
-            offset: Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            spreadRadius: 0,
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          ),
+    double borderRadius = 16,
+    List<BoxShadow>? boxShadow,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF4B5563), // Gray 600
+          Color(0xFF374151), // Gray 700
+          Color(0xFF1F2937), // Gray 800
+          Color(0xFF111827), // Gray 900
+          Color(0xFF030712), // Gray 950
         ],
-  );
-}
+        stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(
+        color: Color(0xFF6B7280).withOpacity(0.5),
+        width: 1.5,
+      ),
+      boxShadow: boxShadow ??
+          [
+            BoxShadow(
+              color: Color(0xFF000000).withOpacity(0.6),
+              spreadRadius: 0,
+              blurRadius: 32,
+              offset: Offset(0, 16),
+            ),
+            BoxShadow(
+              color: Color(0xFF111827).withOpacity(0.8),
+              spreadRadius: 2,
+              blurRadius: 20,
+              offset: Offset(0, 10),
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 0,
+              blurRadius: 12,
+              offset: Offset(0, 6),
+            ),
+          ],
+    );
+  }
 
   static BoxDecoration containerMidnightEleganceDecoration({
     double borderRadius = 18,

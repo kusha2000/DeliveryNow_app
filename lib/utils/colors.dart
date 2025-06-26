@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 final class AppColors {
   // Primary Colors - Beautiful Gold/Amber Theme
   static const Color primaryColor = Color(0xFF7C3AED);
+  static final Color secondaryColor = const Color(0xFF06B6D4);
   static const Color primaryDarkColor = Color(0xFFE6A500);
   static const Color primaryLightColor = Color(0xFFFFCA28);
   static const Color accentColor = Color(0xFF64FFDA);

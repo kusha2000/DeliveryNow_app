@@ -463,7 +463,7 @@ class _CustomerMenuState extends State<CustomerMenu>
               shaderCallback: (bounds) =>
                   AppColors.primaryGradient.createShader(bounds),
               child: const Text(
-                'Go Swift',
+                'DeliveryNow',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w900,

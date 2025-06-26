@@ -103,60 +103,95 @@ class _RiderMenuState extends State<RiderMenu> with TickerProviderStateMixin {
 
                               // Enhanced Menu Grid
                               Expanded(
-                                child: GridView.count(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 20,
-                                  mainAxisSpacing: 20,
-                                  childAspectRatio: 0.95,
+                                child: Column(
                                   children: [
-                                    _buildEnhancedMenuCard(
-                                      icon: Icons.summarize_rounded,
-                                      title: 'Dashboard',
-                                      subtitle: 'Reports & Overview',
-                                      gradient: [
-                                        AppColors.violetColor,
-                                        AppColors.violetColor.withOpacity(0.7)
-                                      ],
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    RiderDashboard()));
-                                      },
+                                    // First row with 2 cards
+                                    SizedBox(
+                                      height: 200,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: _buildEnhancedMenuCard(
+                                              icon: Icons.summarize_rounded,
+                                              title: 'Dashboard',
+                                              subtitle: 'Reports & Overview',
+                                              gradient: [
+                                                AppColors.violetColor,
+                                                AppColors.violetColor
+                                                    .withOpacity(0.7)
+                                              ],
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            RiderDashboard()));
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 20),
+                                          Expanded(
+                                            child: _buildEnhancedMenuCard(
+                                              icon: Icons.calendar_today,
+                                              title: 'Today\'s Delivery',
+                                              subtitle: 'Current Schedule',
+                                              gradient: [
+                                                AppColors.emeraldColor,
+                                                AppColors.emeraldColor
+                                                    .withOpacity(0.7)
+                                              ],
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TodayDeliveryScreen()));
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    _buildEnhancedMenuCard(
-                                      icon: Icons.calendar_today,
-                                      title: 'Today\'s Delivery',
-                                      subtitle: 'Current Schedule',
-                                      gradient: [
-                                        AppColors.emeraldColor,
-                                        AppColors.emeraldColor.withOpacity(0.7)
-                                      ],
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TodayDeliveryScreen()));
-                                      },
+                                    const SizedBox(height: 20),
+                                    // Second row with 1 centered card
+                                    SizedBox(
+                                      height: 200,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                              flex: 1,
+                                              child:
+                                                  Container()), // Left spacer
+                                          Expanded(
+                                            flex: 2,
+                                            child: _buildEnhancedMenuCard(
+                                              icon:
+                                                  Icons.delivery_dining_rounded,
+                                              title: 'Delivery Details',
+                                              subtitle: 'Order Information',
+                                              gradient: [
+                                                AppColors.purpleColor,
+                                                AppColors.purpleColor
+                                                    .withOpacity(0.7)
+                                              ],
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            DeliveryDetailScreen()));
+                                              },
+                                            ),
+                                          ),
+                                          Expanded(
+                                              flex: 1,
+                                              child:
+                                                  Container()), // Right spacer
+                                        ],
+                                      ),
                                     ),
-                                    _buildEnhancedMenuCard(
-                                      icon: Icons.delivery_dining_rounded,
-                                      title: 'Delivery Details',
-                                      subtitle: 'Order Information',
-                                      gradient: [
-                                        AppColors.purpleColor,
-                                        AppColors.purpleColor.withOpacity(0.7)
-                                      ],
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DeliveryDetailScreen()));
-                                      },
-                                    ),
+                                    // Add spacer to push content up
+                                    const Spacer(),
                                   ],
                                 ),
                               ),
@@ -189,7 +224,7 @@ class _RiderMenuState extends State<RiderMenu> with TickerProviderStateMixin {
             shaderCallback: (bounds) =>
                 AppColors.primaryGradient.createShader(bounds),
             child: const Text(
-              'Delivery Now',
+              'DeliveryNow',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w900,

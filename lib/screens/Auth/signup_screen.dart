@@ -16,9 +16,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final AuthService _authServices = AuthService();
-  
+
   String _selectedUserType = 'customer';
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -91,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  
+
                   // Header Section
                   _buildHeader(),
 
@@ -138,9 +139,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 40),
-        
+
         // App Icon
         Container(
           padding: const EdgeInsets.all(20),
@@ -162,9 +163,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: AppColors.whiteColor,
           ),
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         const Text(
           "Create Account",
           style: TextStyle(
@@ -173,9 +174,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: AppColors.textPrimaryColor,
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         Text(
           "Join DeliveryNow and start your journey",
           style: TextStyle(
@@ -261,57 +262,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           _buildTextField(
             controller: _emailController,
             hintText: 'Email Address',
             icon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           _buildTextField(
             controller: _phoneController,
             hintText: 'Phone Number',
             icon: Icons.phone_outlined,
             keyboardType: TextInputType.phone,
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           _buildTextField(
             controller: _passwordController,
             hintText: 'Password',
             icon: Icons.lock_outline_rounded,
             isPassword: true,
             isVisible: _isPasswordVisible,
-            onToggleVisibility: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+            onToggleVisibility: () =>
+                setState(() => _isPasswordVisible = !_isPasswordVisible),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           _buildTextField(
             controller: _confirmPasswordController,
             hintText: 'Confirm Password',
             icon: Icons.lock_outline_rounded,
             isPassword: true,
             isVisible: _isConfirmPasswordVisible,
-            onToggleVisibility: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+            onToggleVisibility: () => setState(
+                () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
           ),
-          
+
           const SizedBox(height: 24),
 
           // User Type Selection
           _buildUserTypeSelection(),
-          
+
           const SizedBox(height: 24),
 
           // Terms and Conditions
           _buildTermsAndConditions(),
-          
+
           const SizedBox(height: 32),
 
           // Sign Up Button
@@ -392,11 +395,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildUserTypeButton('Customer', 'customer', AppColors.customerColor)),
+            Expanded(
+                child: _buildUserTypeButton(
+                    'Customer', 'customer', AppColors.customerColor)),
             const SizedBox(width: 12),
-            Expanded(child: _buildUserTypeButton('Rider', 'rider', AppColors.riderColor)),
+            Expanded(
+                child: _buildUserTypeButton(
+                    'Rider', 'rider', AppColors.riderColor)),
             const SizedBox(width: 12),
-            Expanded(child: _buildUserTypeButton('Staff', 'staff', AppColors.staffColor)),
+            Expanded(
+                child: _buildUserTypeButton(
+                    'Staff', 'staff', AppColors.staffColor)),
           ],
         ),
       ],
@@ -420,9 +429,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           children: [
             Icon(
-              type == 'customer' ? Icons.person_outline_rounded
-                  : type == 'rider' ? Icons.delivery_dining_rounded
-                  : Icons.work_outline_rounded,
+              type == 'customer'
+                  ? Icons.person_outline_rounded
+                  : type == 'rider'
+                      ? Icons.delivery_dining_rounded
+                      : Icons.work_outline_rounded,
               color: isSelected ? color : AppColors.textSecondaryColor,
               size: 24,
             ),
@@ -450,10 +461,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: _isTermsAccepted ? AppColors.primaryColor : AppColors.borderColor,
+              color: _isTermsAccepted
+                  ? AppColors.primaryColor
+                  : AppColors.borderColor,
               width: 2,
             ),
-            color: _isTermsAccepted ? AppColors.primaryColor : Colors.transparent,
+            color:
+                _isTermsAccepted ? AppColors.primaryColor : Colors.transparent,
           ),
           child: InkWell(
             onTap: () => setState(() => _isTermsAccepted = !_isTermsAccepted),
@@ -461,9 +475,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Container(
               width: 20,
               height: 20,
-              child: _isTermsAccepted 
-                ? const Icon(Icons.check, color: AppColors.whiteColor, size: 14)
-                : null,
+              child: _isTermsAccepted
+                  ? const Icon(Icons.check,
+                      color: AppColors.whiteColor, size: 14)
+                  : null,
             ),
           ),
         ),
@@ -505,46 +520,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildSignUpButton() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: (_isLoading || !_isTermsAccepted) ? null : _handleSignUp,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          foregroundColor: AppColors.whiteColor,
-          shadowColor: Colors.transparent,
-          minimumSize: const Size(double.infinity, 56),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+    return ElevatedButton(
+      onPressed: (_isLoading || !_isTermsAccepted) ? null : _handleSignUp,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primaryColor,
+        foregroundColor: AppColors.whiteColor,
+        minimumSize: const Size(double.infinity, 56),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: _isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: AppColors.whiteColor,
-                  strokeWidth: 2,
-                ),
-              )
-            : const Text(
-                "Create Account",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
+      child: _isLoading
+          ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                color: AppColors.whiteColor,
+                strokeWidth: 2,
+              ),
+            )
+          : const Text(
+              "Sign In",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
     );
   }
 
